@@ -6,6 +6,7 @@ import { Features } from "@/components/landing/Features";
 import { SocialProof } from "@/components/landing/SocialProof";
 import { Pricing } from "@/components/landing/Pricing";
 import { FAQ } from "@/components/landing/FAQ";
+import ContactForm from "@/components/landing/ContactForm";
 import { Footer } from "@/components/landing/Footer";
 import { Helmet } from "react-helmet-async";
 
@@ -32,6 +33,7 @@ const Index = () => {
           <SocialProof />
           <Pricing />
           <FAQ />
+          <ContactForm />
         </main>
         <Footer />
       </div>
