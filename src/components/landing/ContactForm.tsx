@@ -63,7 +63,14 @@ const ContactForm = () => {
         message: result.data.message,
       });
 
-      if (error) throw error;
+      if (error) {
+        // Handle rate limiting error from database trigger
+        if (error.message?.includes("Rate limit exceeded")) {
+          toast.error("You've submitted too many messages. Please try again later.");
+          return;
+        }
+        throw error;
+      }
 
       // Send email notification (fire and forget - don't block on this)
       supabase.functions.invoke("send-contact-notification", {
@@ -74,8 +81,8 @@ const ContactForm = () => {
           message: result.data.message,
           adminEmail: "admin@aponda.com", // Configure this with your admin email
         },
-      }).catch((emailError) => {
-        console.error("Email notification failed:", emailError);
+      }).catch(() => {
+        // Silent fail for email - the submission was still saved
       });
 
       toast.success("Message sent successfully! We'll get back to you soon.");
