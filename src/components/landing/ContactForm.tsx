@@ -55,6 +55,7 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
+      // Save to database
       const { error } = await supabase.from("contact_submissions").insert({
         name: result.data.name,
         email: result.data.email,
@@ -63,6 +64,19 @@ const ContactForm = () => {
       });
 
       if (error) throw error;
+
+      // Send email notification (fire and forget - don't block on this)
+      supabase.functions.invoke("send-contact-notification", {
+        body: {
+          name: result.data.name,
+          email: result.data.email,
+          subject: result.data.subject || "",
+          message: result.data.message,
+          adminEmail: "admin@aponda.com", // Configure this with your admin email
+        },
+      }).catch((emailError) => {
+        console.error("Email notification failed:", emailError);
+      });
 
       toast.success("Message sent successfully! We'll get back to you soon.");
       setFormData({ name: "", email: "", subject: "", message: "" });
