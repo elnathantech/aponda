@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import apondaLogo from "@/assets/aponda-logo.png";
 
 const navItems = [
@@ -57,6 +58,7 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             {user ? (
               <>
                 {isAdmin && (
@@ -113,6 +115,10 @@ export function Navbar() {
                   </a>
                 ))}
                 <div className="flex flex-col gap-2 pt-4 border-t border-border">
+                  <div className="flex items-center justify-between py-2">
+                    <span className="text-sm text-muted-foreground">Theme</span>
+                    <ThemeToggle />
+                  </div>
                   {user ? (
                     <>
                       {isAdmin && (
