@@ -4,8 +4,8 @@ import { Check, Zap } from "lucide-react";
 
 const plans = [
   {
-    name: "Free",
-    description: "Perfect for freelancers and startups getting started.",
+    name: "Starter",
+    description: "Perfect for freelancers and micro-businesses just getting started.",
     price: "$0",
     period: "forever",
     features: [
@@ -19,37 +19,37 @@ const plans = [
     popular: false
   },
   {
-    name: "Pro",
-    description: "For growing teams that need full integration power.",
+    name: "Growth",
+    description: "For SMEs ready to automate and scale operations.",
     price: "$9",
     period: "/user/month",
     features: [
       "Unlimited forms & invoices",
       "AI expense categorization",
-      "Recurring billing",
+      "Recurring billing automation",
+      "QuickBooks & Xero sync",
       "45+ integrations",
-      "Custom reports & branding",
       "Priority support",
       "Virtual corporate cards"
     ],
-    cta: "Start Free Trial",
+    cta: "Start 14-Day Free Trial",
     popular: true
   },
   {
     name: "Enterprise",
-    description: "Custom solutions for large organizations.",
+    description: "Custom solutions for established businesses.",
     price: "Custom",
     period: "",
     features: [
-      "Everything in Pro",
+      "Everything in Growth",
       "Unlimited users",
-      "Advanced workflows",
+      "Advanced approval workflows",
       "Dedicated account manager",
-      "Custom integrations",
+      "Custom integrations & API",
       "SLA & compliance",
       "On-premise option"
     ],
-    cta: "Contact Sales",
+    cta: "Talk to Sales",
     popular: false
   }
 ];
@@ -67,15 +67,15 @@ export function Pricing() {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            Pricing
+            SME-Friendly Pricing
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-            Simple, Transparent{" "}
-            <span className="text-gradient">Pricing</span>
+            Pay Only for{" "}
+            <span className="text-gradient">What You Need</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            No credit card required. Start free and scale as you grow.
-            Corporate card cashback offsets your subscription cost.
+            No credit card required. Start free today and scale as your business grows. 
+            ROI in just one month—guaranteed.
           </p>
         </motion.div>
 

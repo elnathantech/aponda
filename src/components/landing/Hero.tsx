@@ -4,9 +4,9 @@ import { Play, ArrowRight, CheckCircle2, Star } from "lucide-react";
 import dashboardPreview from "@/assets/dashboard-preview.png";
 
 const stats = [
-  { value: "100K+", label: "Businesses Trust Us" },
-  { value: "40+", label: "Hours Saved/Month" },
-  { value: "4.8/5", label: "Customer Rating" },
+  { value: "100K+", label: "SMEs Trust Us" },
+  { value: "40hrs", label: "Saved Monthly" },
+  { value: "2x", label: "Faster Payments" },
 ];
 
 export function Hero() {
@@ -32,7 +32,7 @@ export function Hero() {
                 <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
               ))}
             </div>
-            <span className="text-sm text-primary-foreground/80">Trusted by 100,000+ businesses worldwide</span>
+            <span className="text-sm text-primary-foreground/80">Trusted by 100,000+ small & medium businesses</span>
           </motion.div>
 
           {/* Headline */}
@@ -42,8 +42,8 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight mb-6"
           >
-            Automate Your Business{" "}
-            <span className="text-gradient">in One Platform</span>
+            AI-Powered Tools for{" "}
+            <span className="text-gradient">Growing SMEs</span>
           </motion.h1>
 
           {/* Subheadline */}
@@ -53,8 +53,8 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg md:text-xl text-primary-foreground/70 mb-8 max-w-2xl mx-auto"
           >
-            Forms, Invoices, Expenses — All Connected. Go paperless, get paid faster, 
-            and manage spend effortlessly. Free to start.
+            Forms, Invoices, Expenses — AI-powered and all connected. 
+            Save 40+ hours monthly, get paid 2x faster, reduce errors by 90%.
           </motion.p>
 
           {/* Feature Pills */}
@@ -64,7 +64,7 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-wrap justify-center gap-3 mb-10"
           >
-            {["Mobile Data Collection", "Smart Invoicing", "AI Expense Tracking"].map((feature) => (
+            {["AI Expense Tracking", "Smart Invoicing", "QuickBooks & Xero Sync"].map((feature) => (
               <span key={feature} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-foreground/10 text-sm text-primary-foreground/80">
                 <CheckCircle2 className="w-4 h-4 text-accent" />
                 {feature}
