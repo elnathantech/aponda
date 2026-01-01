@@ -41,14 +41,14 @@ export function HowItWorks() {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <span className="inline-block px-4 py-2 rounded-full bg-accent/10 text-accent text-sm font-medium mb-4">
-            How It Works
+            Simple Setup
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-            From Data to Payment{" "}
-            <span className="text-gradient">in 4 Steps</span>
+            Up and Running{" "}
+            <span className="text-gradient">in Minutes</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Experience seamless workflow automation that connects every part of your business operations.
+            No IT department needed. Our AI guides you through setup—most SMEs are live in under 10 minutes.
           </p>
         </motion.div>
 

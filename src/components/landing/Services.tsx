@@ -66,15 +66,15 @@ export function Services() {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            Our Services
+            Built for SMEs
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-            Three Powerful Tools,{" "}
+            Three AI-Powered Tools,{" "}
             <span className="text-gradient">One Platform</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Why choose one tool when you can have them all integrated? 
-            Seamlessly connect your forms, invoices, and expenses.
+            Stop paying for 3+ separate tools. Get enterprise-grade features 
+            at SME-friendly prices—with AI that actually saves you time.
           </p>
         </motion.div>
 

@@ -74,14 +74,15 @@ export function Features() {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            Features
+            AI-Powered Features
           </span>
           <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-6">
-            Everything You Need to{" "}
-            <span className="text-gradient">Scale Effortlessly</span>
+            Built for SMEs That{" "}
+            <span className="text-gradient">Move Fast</span>
           </h2>
           <p className="text-lg text-muted-foreground">
-            Powerful features designed to save you time, reduce errors, and grow your business.
+            Enterprise-grade AI automation at prices small businesses can afford. 
+            Save 40+ hours monthly on manual work.
           </p>
         </motion.div>
 
