@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Zap, Shield } from "lucide-react";
+import { Menu, X, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import apondaLogo from "@/assets/aponda-logo.png";
 
 const navItems = [
   { label: "Services", href: "#services" },
@@ -34,10 +35,11 @@ export function Navbar() {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
-              <Zap className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="text-xl font-bold text-foreground">Aponda</span>
+            <img 
+              src={apondaLogo} 
+              alt="Aponda - Connecting Your World" 
+              className="h-10 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
