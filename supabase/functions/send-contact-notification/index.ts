@@ -1,6 +1,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,6 +16,28 @@ interface ContactNotificationRequest {
   subject?: string;
   message: string;
   adminEmail: string;
+}
+
+// In-memory rate limiting store (resets on function cold start)
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const MAX_REQUESTS_PER_WINDOW = 5;
+
+function checkRateLimit(email: string): { allowed: boolean; remaining: number } {
+  const now = Date.now();
+  const record = rateLimitStore.get(email);
+  
+  if (!record || now > record.resetTime) {
+    rateLimitStore.set(email, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - 1 };
+  }
+  
+  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
+    return { allowed: false, remaining: 0 };
+  }
+  
+  record.count++;
+  return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - record.count };
 }
 
 // Server-side validation matching database constraints
@@ -70,6 +95,41 @@ function escapeHtml(text: string): string {
   return text.replace(/[&<>"']/g, (char) => htmlEntities[char]);
 }
 
+// Verify that this request came after a successful database insert
+async function verifyDatabaseSubmission(email: string, message: string): Promise<boolean> {
+  try {
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+    
+    // Check if there's a recent submission with matching email and message
+    const { data, error } = await supabase
+      .from('contact_submissions')
+      .select('id, created_at')
+      .eq('email', email)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    
+    if (error || !data || data.length === 0) {
+      console.log("No matching database submission found for:", email);
+      return false;
+    }
+    
+    // Verify the submission is recent (within last 5 minutes)
+    const submissionTime = new Date(data[0].created_at).getTime();
+    const now = Date.now();
+    const fiveMinutesMs = 5 * 60 * 1000;
+    
+    if (now - submissionTime > fiveMinutesMs) {
+      console.log("Submission too old, rejecting:", email);
+      return false;
+    }
+    
+    return true;
+  } catch (err) {
+    console.error("Error verifying database submission:", err);
+    return false;
+  }
+}
+
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -93,6 +153,36 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     const { name, email, subject, message, adminEmail } = requestData;
+
+    // Rate limiting check
+    const rateLimit = checkRateLimit(email.toLowerCase());
+    if (!rateLimit.allowed) {
+      console.log("Rate limit exceeded for:", email);
+      return new Response(
+        JSON.stringify({ error: "Too many requests. Please try again later." }),
+        {
+          status: 429,
+          headers: { 
+            "Content-Type": "application/json", 
+            "X-RateLimit-Remaining": "0",
+            ...corsHeaders 
+          },
+        }
+      );
+    }
+
+    // Verify this request corresponds to a valid database submission
+    const isValidSubmission = await verifyDatabaseSubmission(email, message);
+    if (!isValidSubmission) {
+      console.log("Invalid submission - no matching database record:", email);
+      return new Response(
+        JSON.stringify({ error: "Invalid request. Please submit via the contact form." }),
+        {
+          status: 403,
+          headers: { "Content-Type": "application/json", ...corsHeaders },
+        }
+      );
+    }
 
     // Sanitize inputs for email HTML content
     const safeName = escapeHtml(name);
@@ -167,7 +257,11 @@ const handler = async (req: Request): Promise<Response> => {
       JSON.stringify({ success: true, adminEmail: adminResult, userEmail: userResult }),
       {
         status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
+        headers: { 
+          "Content-Type": "application/json", 
+          "X-RateLimit-Remaining": rateLimit.remaining.toString(),
+          ...corsHeaders 
+        },
       }
     );
   } catch (error: any) {
