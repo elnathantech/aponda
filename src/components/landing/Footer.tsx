@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Zap, Twitter, Linkedin, Github, Mail } from "lucide-react";
+import { Twitter, Linkedin, Github, Mail } from "lucide-react";
+import apondaLogo from "@/assets/aponda-logo.png";
 
 const footerLinks = {
   Product: ["Features", "Pricing", "Integrations", "Mobile Apps", "API Docs"],
@@ -51,10 +52,11 @@ export function Footer() {
           {/* Logo & Description */}
           <div className="col-span-2">
             <a href="#" className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center">
-                <Zap className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold">Aponda</span>
+              <img 
+                src={apondaLogo} 
+                alt="Aponda - Connecting Your World" 
+                className="h-12 w-auto"
+              />
             </a>
             <p className="text-primary-foreground/60 mb-6 max-w-xs">
               The all-in-one platform for forms, invoices, and expenses. 
