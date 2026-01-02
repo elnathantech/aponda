@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Zap, ArrowLeft, Trash2, Mail, Calendar, User, MessageSquare, RefreshCw } from "lucide-react";
@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { logError } from "@/lib/errorHandler";
 import {
   Table,
   TableBody,
@@ -36,26 +37,90 @@ interface ContactSubmission {
 }
 
 const Admin = () => {
-  const { user, isLoading, isAdmin, signOut } = useAuth();
+  const { user, isLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [submissions, setSubmissions] = useState<ContactSubmission[]>([]);
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [selectedSubmission, setSelectedSubmission] = useState<ContactSubmission | null>(null);
+  const [adminVerified, setAdminVerified] = useState(false);
+  const [verificationComplete, setVerificationComplete] = useState(false);
 
+  // Server-side admin verification - queries DB directly instead of relying on client state
+  const verifyAdminRole = useCallback(async () => {
+    if (!user) {
+      setVerificationComplete(true);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (error) {
+        logError('Admin:verifyAdminRole', error);
+        setAdminVerified(false);
+      } else {
+        setAdminVerified(!!data);
+      }
+    } catch (error) {
+      logError('Admin:verifyAdminRole', error);
+      setAdminVerified(false);
+    } finally {
+      setVerificationComplete(true);
+    }
+  }, [user]);
+
+  // Verify admin role on mount and when user changes
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!isLoading) {
+      verifyAdminRole();
+    }
+  }, [isLoading, user, verifyAdminRole]);
+
+  // Redirect logic after verification is complete
+  useEffect(() => {
+    if (!verificationComplete) return;
+
+    if (!user) {
       navigate("/auth");
-    } else if (!isLoading && user && !isAdmin) {
+    } else if (!adminVerified) {
       toast.error("Access denied. Admin privileges required.");
       navigate("/");
     }
-  }, [user, isLoading, isAdmin, navigate]);
+  }, [verificationComplete, user, adminVerified, navigate]);
 
+  // Periodic re-verification of admin status (every 5 minutes)
   useEffect(() => {
-    if (isAdmin) {
+    if (!adminVerified) return;
+
+    const interval = setInterval(async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user?.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (!data) {
+        setAdminVerified(false);
+        toast.error("Admin session expired");
+        navigate("/");
+      }
+    }, 300000); // 5 minutes
+
+    return () => clearInterval(interval);
+  }, [adminVerified, user, navigate]);
+
+  // Fetch submissions only after admin verification
+  useEffect(() => {
+    if (adminVerified) {
       fetchSubmissions();
     }
-  }, [isAdmin]);
+  }, [adminVerified]);
 
   const fetchSubmissions = async () => {
     setIsLoadingData(true);
@@ -65,7 +130,10 @@ const Admin = () => {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        logError('Admin:fetchSubmissions', error);
+        throw error;
+      }
       setSubmissions(data || []);
     } catch (error) {
       toast.error("Failed to load submissions");
@@ -81,7 +149,10 @@ const Admin = () => {
         .delete()
         .eq("id", id);
 
-      if (error) throw error;
+      if (error) {
+        logError('Admin:handleDelete', error);
+        throw error;
+      }
       
       setSubmissions((prev) => prev.filter((s) => s.id !== id));
       toast.success("Submission deleted");
@@ -95,7 +166,8 @@ const Admin = () => {
     navigate("/");
   };
 
-  if (isLoading || !isAdmin) {
+  // Don't render anything until verification is complete - prevents UI exposure
+  if (isLoading || !verificationComplete || !adminVerified) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
