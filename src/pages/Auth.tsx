@@ -9,14 +9,25 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { z } from "zod";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
+import { getClientSafeError, logError } from "@/lib/errorHandler";
 import apondaLogo from "@/assets/aponda-logo.png";
+
+// Strong password validation with complexity requirements
+const passwordSchema = z.string()
+  .min(8, "Password must be at least 8 characters")
+  .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+  .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+  .regex(/[0-9]/, "Password must contain at least one number")
+  .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character");
 
 const loginSchema = z.object({
   email: z.string().trim().email("Please enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string().min(1, "Password is required"),
 });
 
-const signupSchema = loginSchema.extend({
+const signupSchema = z.object({
+  email: z.string().trim().email("Please enter a valid email"),
+  password: passwordSchema,
   fullName: z.string().trim().min(1, "Please enter your name").max(100),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -65,11 +76,8 @@ const Auth = () => {
         const { error } = await signIn(email, password);
 
         if (error) {
-          if (error.message.includes("Invalid login credentials")) {
-            toast.error("Invalid email or password");
-          } else {
-            toast.error(error.message);
-          }
+          logError('Auth:signIn', error);
+          toast.error(getClientSafeError(error));
         } else {
           toast.success("Welcome back!");
           navigate("/");
@@ -89,17 +97,15 @@ const Auth = () => {
         const { error } = await signUp(email, password, fullName);
 
         if (error) {
-          if (error.message.includes("already registered")) {
-            toast.error("This email is already registered. Please sign in.");
-          } else {
-            toast.error(error.message);
-          }
+          logError('Auth:signUp', error);
+          toast.error(getClientSafeError(error));
         } else {
           toast.success("Account created successfully!");
           setShowOnboarding(true);
         }
       }
     } catch (error) {
+      logError('Auth:handleSubmit', error);
       toast.error("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
