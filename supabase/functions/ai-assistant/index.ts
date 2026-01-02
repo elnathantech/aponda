@@ -5,6 +5,102 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Rate limiting configuration
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const MAX_REQUESTS_PER_WINDOW = 20; // 20 requests per hour per IP
+const MAX_MESSAGES_PER_REQUEST = 10; // Max conversation history length
+const MAX_MESSAGE_LENGTH = 500; // Max characters per message
+
+// In-memory rate limiting store
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+function getClientIP(req: Request): string {
+  const forwarded = req.headers.get("x-forwarded-for");
+  if (forwarded) {
+    return forwarded.split(",")[0].trim();
+  }
+  const realIP = req.headers.get("x-real-ip");
+  if (realIP) {
+    return realIP;
+  }
+  return "unknown";
+}
+
+function checkRateLimit(identifier: string): { allowed: boolean; remaining: number } {
+  const now = Date.now();
+  const record = rateLimitStore.get(identifier);
+
+  if (!record || now > record.resetTime) {
+    rateLimitStore.set(identifier, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - 1 };
+  }
+
+  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
+    return { allowed: false, remaining: 0 };
+  }
+
+  record.count++;
+  return { allowed: true, remaining: MAX_REQUESTS_PER_WINDOW - record.count };
+}
+
+// Clean up old entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, value] of rateLimitStore.entries()) {
+    if (now > value.resetTime) {
+      rateLimitStore.delete(key);
+    }
+  }
+}, 5 * 60 * 1000); // Clean every 5 minutes
+
+interface Message {
+  role: string;
+  content: string;
+}
+
+function validateMessages(messages: unknown): { valid: boolean; error?: string; sanitized?: Message[] } {
+  if (!Array.isArray(messages)) {
+    return { valid: false, error: "Messages must be an array" };
+  }
+
+  if (messages.length === 0) {
+    return { valid: false, error: "Messages array cannot be empty" };
+  }
+
+  if (messages.length > MAX_MESSAGES_PER_REQUEST) {
+    return { valid: false, error: `Maximum ${MAX_MESSAGES_PER_REQUEST} messages allowed per request` };
+  }
+
+  const sanitized: Message[] = [];
+  for (const msg of messages) {
+    if (typeof msg !== "object" || msg === null) {
+      return { valid: false, error: "Each message must be an object" };
+    }
+
+    const { role, content } = msg as Record<string, unknown>;
+
+    if (typeof role !== "string" || !["user", "assistant"].includes(role)) {
+      return { valid: false, error: "Message role must be 'user' or 'assistant'" };
+    }
+
+    if (typeof content !== "string") {
+      return { valid: false, error: "Message content must be a string" };
+    }
+
+    if (content.length > MAX_MESSAGE_LENGTH) {
+      return { valid: false, error: `Message content exceeds maximum length of ${MAX_MESSAGE_LENGTH} characters` };
+    }
+
+    // Sanitize content - trim and limit
+    sanitized.push({
+      role,
+      content: content.trim().slice(0, MAX_MESSAGE_LENGTH),
+    });
+  }
+
+  return { valid: true, sanitized };
+}
+
 const SYSTEM_PROMPT = `You are an AI business assistant for Aponda, an all-in-one platform for small and medium enterprises (SMEs). Your role is to help potential customers understand how Aponda can solve their business challenges.
 
 Key product features to highlight:
@@ -32,7 +128,55 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    // Rate limiting check
+    const clientIP = getClientIP(req);
+    const rateLimitResult = checkRateLimit(clientIP);
+    
+    if (!rateLimitResult.allowed) {
+      console.log(`Rate limit exceeded for IP: ${clientIP}`);
+      return new Response(
+        JSON.stringify({ error: "Rate limit exceeded. Please try again later." }),
+        { 
+          status: 429, 
+          headers: { 
+            ...corsHeaders, 
+            "Content-Type": "application/json",
+            "Retry-After": "3600"
+          } 
+        }
+      );
+    }
+
+    // Parse and validate request body
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON in request body" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (typeof body !== "object" || body === null) {
+      return new Response(
+        JSON.stringify({ error: "Request body must be an object" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { messages } = body as Record<string, unknown>;
+    
+    // Validate messages
+    const validation = validateMessages(messages);
+    if (!validation.valid) {
+      return new Response(
+        JSON.stringify({ error: validation.error }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const sanitizedMessages = validation.sanitized!;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
@@ -53,7 +197,7 @@ serve(async (req) => {
         model: "google/gemini-2.5-flash",
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          ...messages.map((m: { role: string; content: string }) => ({
+          ...sanitizedMessages.map((m) => ({
             role: m.role,
             content: m.content,
           })),
