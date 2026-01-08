@@ -23,6 +23,8 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 import { formatCurrency, getTaxYear } from '@/lib/uk-payroll-calculator';
+import { generateP60PDF } from '@/lib/pdf-generator';
+import type { Tables } from '@/integrations/supabase/types';
 
 export default function ReportsPage() {
   const { companyId } = useParams<{ companyId: string }>();
@@ -79,6 +81,24 @@ export default function ReportsPage() {
   
   // RTI/FPS submission history
   const rtiSubmissions = filteredRuns.filter(r => r.submitted_to_hmrc);
+  
+  const handleDownloadP60 = (emp: Tables<'employees'>) => {
+    if (!company) return;
+    
+    generateP60PDF({
+      companyName: company.name,
+      payeReference: company.paye_reference || undefined,
+      employeeName: `${emp.first_name} ${emp.last_name}`,
+      employeeNumber: emp.employee_number,
+      niNumber: emp.ni_number || undefined,
+      taxCode: emp.tax_code || undefined,
+      taxYear: selectedTaxYear,
+      totalPay: emp.annual_salary, // This would come from YTD totals in production
+      totalTax: 0, // This would come from YTD totals
+      totalNi: 0, // This would come from YTD totals
+      totalPension: 0, // This would come from YTD totals
+    });
+  };
   
   const handleExportCSV = (reportType: string) => {
     let csvContent = '';
@@ -344,7 +364,12 @@ export default function ReportsPage() {
                             <span>-</span>
                           </div>
                         </div>
-                        <Button variant="outline" className="w-full mt-4" size="sm">
+                        <Button 
+                          variant="outline" 
+                          className="w-full mt-4" 
+                          size="sm"
+                          onClick={() => handleDownloadP60(emp)}
+                        >
                           <Download className="h-4 w-4 mr-2" />
                           Download PDF
                         </Button>

@@ -61,6 +61,9 @@ export function Navbar() {
             <ThemeToggle />
             {user ? (
               <>
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/dashboard">Dashboard</Link>
+                </Button>
                 {isAdmin && (
                   <Button variant="outline" size="sm" asChild>
                     <Link to="/admin">
@@ -121,6 +124,11 @@ export function Navbar() {
                   </div>
                   {user ? (
                     <>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                          Dashboard
+                        </Link>
+                      </Button>
                       {isAdmin && (
                         <Button variant="outline" size="sm" asChild>
                           <Link to="/admin" onClick={() => setIsOpen(false)}>
