@@ -194,7 +194,7 @@ export function useCreatePayrollRun() {
       
       // Calculate payslips for each active employee
       const activeEmployees = employees.filter(e => e.status === 'active');
-      const payslips: Partial<Payslip>[] = [];
+      const payslips: Omit<Payslip, 'id' | 'created_at'>[] = [];
       
       let totalGross = 0;
       let totalNet = 0;
