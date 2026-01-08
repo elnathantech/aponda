@@ -21,9 +21,11 @@ import {
   Check,
   Send,
   Eye,
-  Calendar
+  Calendar,
+  Download
 } from 'lucide-react';
 import { formatCurrency, getTaxYear } from '@/lib/uk-payroll-calculator';
+import { generatePayslipPDF } from '@/lib/pdf-generator';
 
 export default function PayrollPage() {
   const { companyId } = useParams<{ companyId: string }>();
@@ -72,6 +74,35 @@ export default function PayrollPage() {
   
   const handleSubmitToHMRC = async (runId: string) => {
     await updateStatus.mutateAsync({ id: runId, status: 'submitted', submittedToHmrc: true });
+  };
+  
+  const handleDownloadPayslip = (payslip: typeof payslips extends (infer T)[] | undefined ? T : never) => {
+    if (!payslip || !company || !selectedRun) return;
+    const employee = employees?.find(e => e.id === payslip.employee_id);
+    if (!employee) return;
+    
+    generatePayslipPDF({
+      companyName: company.name,
+      payeReference: company.paye_reference || undefined,
+      employeeName: `${employee.first_name} ${employee.last_name}`,
+      employeeNumber: employee.employee_number,
+      niNumber: employee.ni_number || undefined,
+      taxCode: employee.tax_code || undefined,
+      payDate: new Date(selectedRun.pay_date).toLocaleDateString('en-GB'),
+      payPeriod: `${new Date(selectedRun.pay_period_start).toLocaleDateString('en-GB')} - ${new Date(selectedRun.pay_period_end).toLocaleDateString('en-GB')}`,
+      grossPay: payslip.gross_pay,
+      taxablePay: payslip.taxable_pay,
+      incomeTax: payslip.income_tax,
+      niEmployee: payslip.ni_employee,
+      pensionEmployee: payslip.pension_employee || 0,
+      studentLoan: payslip.student_loan || 0,
+      otherDeductions: payslip.other_deductions || 0,
+      netPay: payslip.net_pay,
+      ytdGross: payslip.ytd_gross,
+      ytdTax: payslip.ytd_tax,
+      ytdNi: payslip.ytd_ni,
+      ytdPension: payslip.ytd_pension_employee || 0,
+    });
   };
   
   const activeEmployees = employees?.filter(e => e.status === 'active') || [];
@@ -349,6 +380,7 @@ export default function PayrollPage() {
                         <TableHead>Pension</TableHead>
                         <TableHead>Net</TableHead>
                         <TableHead>YTD Gross</TableHead>
+                        <TableHead className="w-12"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -365,6 +397,15 @@ export default function PayrollPage() {
                             {formatCurrency(payslip.net_pay)}
                           </TableCell>
                           <TableCell>{formatCurrency(payslip.ytd_gross)}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDownloadPayslip(payslip)}
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
