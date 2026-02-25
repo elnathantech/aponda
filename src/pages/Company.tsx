@@ -20,7 +20,13 @@ import {
   Circle,
   Loader2,
   ChevronRight,
-  AlertCircle
+  AlertCircle,
+  Receipt,
+  FolderOpen,
+  Clock,
+  TrendingUp,
+  CalendarDays,
+  BarChart3
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -226,6 +232,25 @@ export default function CompanyPage() {
               </div>
             </CardContent>
           </Card>
+        </div>
+        
+        {/* Feature Navigation */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
+          {[
+            { label: 'Projects', icon: FolderOpen, path: 'projects' },
+            { label: 'Invoices', icon: Receipt, path: 'invoices' },
+            { label: 'Cashflow', icon: BarChart3, path: 'cashflow' },
+            { label: 'Workload', icon: Clock, path: 'workload' },
+            { label: 'Revenue', icon: TrendingUp, path: 'revenue' },
+            { label: 'Leave', icon: CalendarDays, path: 'leave' },
+          ].map(item => (
+            <Card key={item.path} className="cursor-pointer hover:border-primary transition-colors" onClick={() => navigate(`/company/${companyId}/${item.path}`)}>
+              <CardContent className="pt-4 pb-4 flex flex-col items-center gap-2">
+                <item.icon className="h-6 w-6 text-primary" />
+                <span className="text-sm font-medium">{item.label}</span>
+              </CardContent>
+            </Card>
+          ))}
         </div>
         
         {/* Main Content Tabs */}
