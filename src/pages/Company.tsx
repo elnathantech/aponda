@@ -26,7 +26,8 @@ import {
   Clock,
   TrendingUp,
   CalendarDays,
-  BarChart3
+  BarChart3,
+  Calculator
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -240,6 +241,7 @@ export default function CompanyPage() {
             { label: 'Projects', icon: FolderOpen, path: 'projects' },
             { label: 'Invoices', icon: Receipt, path: 'invoices' },
             { label: 'Cashflow', icon: BarChart3, path: 'cashflow' },
+            { label: 'Forecasting', icon: Calculator, path: 'forecasting' },
             { label: 'Workload', icon: Clock, path: 'workload' },
             { label: 'Revenue', icon: TrendingUp, path: 'revenue' },
             { label: 'Leave', icon: CalendarDays, path: 'leave' },
