@@ -288,7 +288,18 @@ const Auth = () => {
               </Button>
             </form>
 
-            <p className="text-center text-sm text-muted-foreground mt-6">
+            {mode === "login" && (
+              <p className="text-center text-sm text-muted-foreground mt-4">
+                <button
+                  onClick={() => navigate("/forgot-password")}
+                  className="text-primary hover:underline font-medium"
+                >
+                  Forgot your password?
+                </button>
+              </p>
+            )}
+
+            <p className="text-center text-sm text-muted-foreground mt-4">
               {mode === "login" ? (
                 <>
                   Don't have an account?{" "}
