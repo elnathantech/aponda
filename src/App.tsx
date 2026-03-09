@@ -25,6 +25,7 @@ import Workload from "./pages/Workload";
 import Revenue from "./pages/Revenue";
 import Forecasting from "./pages/Forecasting";
 import NotFound from "./pages/NotFound";
+import { CompanyLayoutRoute } from "./components/company/CompanyLayoutRoute";
 
 const queryClient = new QueryClient();
 
@@ -44,18 +45,20 @@ const App = () => (
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/company/:companyId" element={<Company />} />
-                <Route path="/company/:companyId/employees" element={<Employees />} />
-                <Route path="/company/:companyId/payroll" element={<Payroll />} />
-                <Route path="/company/:companyId/reports" element={<Reports />} />
-                <Route path="/company/:companyId/leave" element={<Leave />} />
-                <Route path="/company/:companyId/settings" element={<Settings />} />
-                <Route path="/company/:companyId/projects" element={<Projects />} />
-                <Route path="/company/:companyId/invoices" element={<Invoices />} />
-                <Route path="/company/:companyId/cashflow" element={<Cashflow />} />
-                <Route path="/company/:companyId/workload" element={<Workload />} />
-                <Route path="/company/:companyId/revenue" element={<Revenue />} />
-                <Route path="/company/:companyId/forecasting" element={<Forecasting />} />
+                <Route path="/company/:companyId" element={<CompanyLayoutRoute />}>
+                  <Route index element={<Company />} />
+                  <Route path="employees" element={<Employees />} />
+                  <Route path="payroll" element={<Payroll />} />
+                  <Route path="reports" element={<Reports />} />
+                  <Route path="leave" element={<Leave />} />
+                  <Route path="settings" element={<Settings />} />
+                  <Route path="projects" element={<Projects />} />
+                  <Route path="invoices" element={<Invoices />} />
+                  <Route path="cashflow" element={<Cashflow />} />
+                  <Route path="workload" element={<Workload />} />
+                  <Route path="revenue" element={<Revenue />} />
+                  <Route path="forecasting" element={<Forecasting />} />
+                </Route>
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

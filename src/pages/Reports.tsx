@@ -142,30 +142,19 @@ export default function ReportsPage() {
   
   if (authLoading || companyLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="flex items-center justify-center p-12">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
+    <div className="bg-background">
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate(`/company/${companyId}`)}>
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-lg bg-primary flex items-center justify-center">
-                <Building2 className="h-6 w-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold">{company?.name}</h1>
-                <p className="text-sm text-muted-foreground">Reports & Analytics</p>
-              </div>
-            </div>
+          <div>
+            <h1 className="text-xl font-bold">Reports & Analytics</h1>
+            <p className="text-sm text-muted-foreground">{company?.name}</p>
           </div>
           <Select value={selectedTaxYear} onValueChange={setSelectedTaxYear}>
             <SelectTrigger className="w-40">
