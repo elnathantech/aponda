@@ -96,6 +96,41 @@ export default function InvoicesPage() {
     setItems([{ description: '', quantity: 1, unit_price: 0, total: 0 }]);
   };
 
+  const handleDownloadPDF = async (inv: Invoice) => {
+    // Fetch invoice items
+    const { data: invoiceItems } = await supabase
+      .from('invoice_items')
+      .select('*')
+      .eq('invoice_id', inv.id)
+      .order('created_at');
+
+    generateInvoicePDF({
+      invoiceNumber: inv.invoice_number,
+      companyName: company?.name || '',
+      companyAddress: company?.registered_address ? Object.values(company.registered_address as Record<string, string>).filter(Boolean).join('\n') : undefined,
+      vatNumber: company?.vat_number || undefined,
+      clientName: inv.client_name,
+      clientEmail: inv.client_email || undefined,
+      clientAddress: inv.client_address as Record<string, string> || undefined,
+      issueDate: new Date(inv.issue_date).toLocaleDateString('en-GB'),
+      dueDate: new Date(inv.due_date).toLocaleDateString('en-GB'),
+      items: (invoiceItems || []).map(item => ({
+        description: item.description,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        total: item.total,
+      })),
+      subtotal: inv.subtotal,
+      taxRate: inv.tax_rate ?? 20,
+      taxAmount: inv.tax_amount,
+      total: inv.total,
+      amountPaid: inv.amount_paid,
+      notes: inv.notes || undefined,
+      paymentTerms: inv.payment_terms || undefined,
+      status: inv.status,
+    });
+  };
+
   const filtered = invoices?.filter(inv => filterStatus === 'all' || inv.status === filterStatus) || [];
   const totalOutstanding = invoices?.filter(i => i.status === 'sent' || i.status === 'overdue').reduce((s, i) => s + i.total - i.amount_paid, 0) || 0;
   const totalPaid = invoices?.filter(i => i.status === 'paid').reduce((s, i) => s + i.total, 0) || 0;
