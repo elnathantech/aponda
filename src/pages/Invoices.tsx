@@ -15,8 +15,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import {
-  ArrowLeft, Plus, Loader2, MoreHorizontal, Send, CheckCircle, XCircle, Trash2, Receipt, PoundSterling
+  ArrowLeft, Plus, Loader2, MoreHorizontal, Send, CheckCircle, XCircle, Trash2, Receipt, PoundSterling, Download
 } from 'lucide-react';
+import { generateInvoicePDF } from '@/lib/invoice-pdf-generator';
+import { useInvoiceItems } from '@/hooks/useInvoices';
 
 const statusColors: Record<Invoice['status'], string> = {
   draft: 'secondary',
