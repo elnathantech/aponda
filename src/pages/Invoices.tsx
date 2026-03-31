@@ -348,6 +348,9 @@ export default function InvoicesPage() {
                             <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleDownloadPDF(inv)}>
+                              <Download className="h-4 w-4 mr-2" />Download PDF
+                            </DropdownMenuItem>
                             {inv.status === 'draft' && (
                               <DropdownMenuItem onClick={() => updateStatus.mutate({ id: inv.id, status: 'sent' })}>
                                 <Send className="h-4 w-4 mr-2" />Mark as Sent
