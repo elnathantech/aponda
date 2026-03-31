@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCompany } from '@/hooks/useCompany';
 import { useProjects } from '@/hooks/useProjects';
 import { useInvoices, useCreateInvoice, useUpdateInvoiceStatus, useDeleteInvoice, type Invoice } from '@/hooks/useInvoices';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,8 +16,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import {
-  ArrowLeft, Plus, Loader2, MoreHorizontal, Send, CheckCircle, XCircle, Trash2, Receipt, PoundSterling
+  ArrowLeft, Plus, Loader2, MoreHorizontal, Send, CheckCircle, XCircle, Trash2, Receipt, PoundSterling, Download
 } from 'lucide-react';
+import { generateInvoicePDF } from '@/lib/invoice-pdf-generator';
 
 const statusColors: Record<Invoice['status'], string> = {
   draft: 'secondary',
@@ -92,6 +94,41 @@ export default function InvoicesPage() {
     setIsCreateOpen(false);
     setForm({ client_name: '', client_email: '', project_id: '', due_date: '', tax_rate: 20, notes: '', payment_terms: 'Net 30' });
     setItems([{ description: '', quantity: 1, unit_price: 0, total: 0 }]);
+  };
+
+  const handleDownloadPDF = async (inv: Invoice) => {
+    // Fetch invoice items
+    const { data: invoiceItems } = await supabase
+      .from('invoice_items')
+      .select('*')
+      .eq('invoice_id', inv.id)
+      .order('created_at');
+
+    generateInvoicePDF({
+      invoiceNumber: inv.invoice_number,
+      companyName: company?.name || '',
+      companyAddress: company?.registered_address ? Object.values(company.registered_address as Record<string, string>).filter(Boolean).join('\n') : undefined,
+      vatNumber: company?.vat_number || undefined,
+      clientName: inv.client_name,
+      clientEmail: inv.client_email || undefined,
+      clientAddress: inv.client_address as Record<string, string> || undefined,
+      issueDate: new Date(inv.issue_date).toLocaleDateString('en-GB'),
+      dueDate: new Date(inv.due_date).toLocaleDateString('en-GB'),
+      items: (invoiceItems || []).map(item => ({
+        description: item.description,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        total: item.total,
+      })),
+      subtotal: inv.subtotal,
+      taxRate: inv.tax_rate ?? 20,
+      taxAmount: inv.tax_amount,
+      total: inv.total,
+      amountPaid: inv.amount_paid,
+      notes: inv.notes || undefined,
+      paymentTerms: inv.payment_terms || undefined,
+      status: inv.status,
+    });
   };
 
   const filtered = invoices?.filter(inv => filterStatus === 'all' || inv.status === filterStatus) || [];
@@ -310,6 +347,9 @@ export default function InvoicesPage() {
                             <Button variant="ghost" size="icon"><MoreHorizontal className="h-4 w-4" /></Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleDownloadPDF(inv)}>
+                              <Download className="h-4 w-4 mr-2" />Download PDF
+                            </DropdownMenuItem>
                             {inv.status === 'draft' && (
                               <DropdownMenuItem onClick={() => updateStatus.mutate({ id: inv.id, status: 'sent' })}>
                                 <Send className="h-4 w-4 mr-2" />Mark as Sent
