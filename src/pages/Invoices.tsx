@@ -19,7 +19,6 @@ import {
   ArrowLeft, Plus, Loader2, MoreHorizontal, Send, CheckCircle, XCircle, Trash2, Receipt, PoundSterling, Download
 } from 'lucide-react';
 import { generateInvoicePDF } from '@/lib/invoice-pdf-generator';
-import { useInvoiceItems } from '@/hooks/useInvoices';
 
 const statusColors: Record<Invoice['status'], string> = {
   draft: 'secondary',
