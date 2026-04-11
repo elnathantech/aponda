@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Play, ArrowRight, CheckCircle2, Star } from "lucide-react";
 import dashboardPreview from "@/assets/dashboard-preview.png";
+import { DemoVideoDialog } from "./DemoVideoDialog";
 
 const stats = [
   { value: "100K+", label: "SMEs Trust Us" },
@@ -83,10 +84,12 @@ export function Hero() {
               Start Free Trial
               <ArrowRight className="w-5 h-5" />
             </Button>
-            <Button variant="heroOutline" size="xl" className="w-full sm:w-auto text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground/10">
-              <Play className="w-5 h-5" />
-              Watch Demo (2 min)
-            </Button>
+            <DemoVideoDialog>
+              <Button variant="heroOutline" size="xl" className="w-full sm:w-auto text-primary-foreground border-primary-foreground/30 hover:bg-primary-foreground/10">
+                <Play className="w-5 h-5" />
+                Watch Demo (30s)
+              </Button>
+            </DemoVideoDialog>
           </motion.div>
 
           {/* Stats */}
