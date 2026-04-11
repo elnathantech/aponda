@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Play, ArrowRight, CheckCircle2, Star } from "lucide-react";
 import dashboardPreview from "@/assets/dashboard-preview.png";
+import { DemoVideoDialog } from "./DemoVideoDialog";
 
 const stats = [
   { value: "100K+", label: "SMEs Trust Us" },
