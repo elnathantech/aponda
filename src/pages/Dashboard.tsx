@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { LogOut } from 'lucide-react';
 import { useCompanies, useCreateCompany } from '@/hooks/useCompany';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +19,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function Dashboard() {
-  const { user, isLoading: authLoading } = useAuth();
+  const { user, isLoading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const { data: companies, isLoading: companiesLoading } = useCompanies();
   const createCompany = useCreateCompany();
@@ -62,10 +63,14 @@ export default function Dashboard() {
               <p className="text-sm text-muted-foreground">SME Payroll & HR Management</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">{user?.email}</span>
             <Button variant="outline" onClick={() => navigate('/')}>
               Back to Home
+            </Button>
+            <Button variant="destructive" size="sm" onClick={async () => { await signOut(); navigate('/'); }}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
             </Button>
           </div>
         </div>
