@@ -54,7 +54,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (!isLoading && user && !showOnboarding) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, [user, isLoading, navigate, showOnboarding]);
 
