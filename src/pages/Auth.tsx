@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { z } from "zod";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
+import { useCreateCompany } from "@/hooks/useCompany";
 import { getClientSafeError, logError } from "@/lib/errorHandler";
 import apondaLogo from "@/assets/aponda-logo.png";
 
@@ -48,11 +49,12 @@ const Auth = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const { signIn, signUp, user, isLoading } = useAuth();
+  const createCompany = useCreateCompany();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isLoading && user && !showOnboarding) {
-      navigate("/");
+      navigate("/dashboard");
     }
   }, [user, isLoading, navigate, showOnboarding]);
 
@@ -80,7 +82,7 @@ const Auth = () => {
           toast.error(getClientSafeError(error));
         } else {
           toast.success("Welcome back!");
-          navigate("/");
+          navigate("/dashboard");
         }
       } else {
         const result = signupSchema.safeParse({ email, password, confirmPassword, fullName });
@@ -112,12 +114,16 @@ const Auth = () => {
     }
   };
 
-  const handleOnboardingComplete = (data: { businessName: string; businessType: string; teamSize: string; primaryUse: string[] }) => {
-    console.log("Onboarding data:", data);
-    // In a real app, save this to the database
-    toast.success(`Welcome to Aponda, ${data.businessName}! Let's get started.`);
+  const handleOnboardingComplete = async (data: { businessName: string; businessType: string; teamSize: string; primaryUse: string[] }) => {
+    try {
+      await createCompany.mutateAsync({ name: data.businessName });
+      toast.success(`Welcome to Aponda, ${data.businessName}! Let's get started.`);
+    } catch (error) {
+      logError('Auth:onboardingComplete', error);
+      toast.error("Company was not created, but you can add one from the dashboard.");
+    }
     setShowOnboarding(false);
-    navigate("/");
+    navigate("/dashboard");
   };
 
   if (isLoading) {
@@ -134,7 +140,7 @@ const Auth = () => {
         isOpen={showOnboarding} 
         onClose={() => {
           setShowOnboarding(false);
-          navigate("/");
+          navigate("/dashboard");
         }}
         onComplete={handleOnboardingComplete}
       />
