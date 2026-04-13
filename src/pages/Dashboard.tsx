@@ -91,6 +91,21 @@ export default function Dashboard() {
             Manage your companies, employees, and payroll all in one place.
           </p>
         </div>
+
+        {/* MFA Recommendation Banner */}
+        {!mfaLoading && !mfaEnabled && (
+          <Alert className="mb-6 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30">
+            <ShieldAlert className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="flex items-center justify-between">
+              <span className="text-amber-800 dark:text-amber-200">
+                <strong>Recommended:</strong> Enable two-factor authentication to protect your account and business data.
+              </span>
+              <Button size="sm" variant="outline" onClick={() => navigate('/account-security')} className="ml-4 shrink-0">
+                Set up now
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
         
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
