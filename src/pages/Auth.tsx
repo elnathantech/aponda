@@ -140,7 +140,7 @@ const Auth = () => {
         isOpen={showOnboarding} 
         onClose={() => {
           setShowOnboarding(false);
-          navigate("/");
+          navigate("/dashboard");
         }}
         onComplete={handleOnboardingComplete}
       />
