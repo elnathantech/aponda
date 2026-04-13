@@ -49,6 +49,7 @@ const Auth = () => {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   const { signIn, signUp, user, isLoading } = useAuth();
+  const createCompany = useCreateCompany();
   const navigate = useNavigate();
 
   useEffect(() => {
