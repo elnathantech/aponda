@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { LogOut } from 'lucide-react';
+import { useMFA } from '@/hooks/useMFA';
+import { LogOut, ShieldAlert, ShieldCheck } from 'lucide-react';
 import { useCompanies, useCreateCompany } from '@/hooks/useCompany';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Building2, 
   Users, 
@@ -23,6 +25,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { data: companies, isLoading: companiesLoading } = useCompanies();
   const createCompany = useCreateCompany();
+  const { isEnabled: mfaEnabled, isLoading: mfaLoading } = useMFA();
   
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [companyName, setCompanyName] = useState('');
@@ -68,6 +71,10 @@ export default function Dashboard() {
             <Button variant="outline" onClick={() => navigate('/')}>
               Back to Home
             </Button>
+            <Button variant="outline" size="sm" onClick={() => navigate('/account-security')}>
+              <ShieldCheck className="h-4 w-4 mr-2" />
+              Security
+            </Button>
             <Button variant="destructive" size="sm" onClick={async () => { await signOut(); navigate('/'); }}>
               <LogOut className="h-4 w-4 mr-2" />
               Logout
@@ -84,6 +91,21 @@ export default function Dashboard() {
             Manage your companies, employees, and payroll all in one place.
           </p>
         </div>
+
+        {/* MFA Recommendation Banner */}
+        {!mfaLoading && !mfaEnabled && (
+          <Alert className="mb-6 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/30">
+            <ShieldAlert className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="flex items-center justify-between">
+              <span className="text-amber-800 dark:text-amber-200">
+                <strong>Recommended:</strong> Enable two-factor authentication to protect your account and business data.
+              </span>
+              <Button size="sm" variant="outline" onClick={() => navigate('/account-security')} className="ml-4 shrink-0">
+                Set up now
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
         
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">

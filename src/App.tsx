@@ -12,6 +12,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
+import MFAVerify from "./pages/MFAVerify";
+import AccountSecurity from "./pages/AccountSecurity";
 import Company from "./pages/Company";
 import Employees from "./pages/Employees";
 import Payroll from "./pages/Payroll";
@@ -45,6 +47,8 @@ const App = () => (
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/mfa-verify" element={<MFAVerify />} />
+                <Route path="/account-security" element={<AccountSecurity />} />
                 <Route path="/company/:companyId" element={<CompanyLayoutRoute />}>
                   <Route index element={<Company />} />
                   <Route path="employees" element={<Employees />} />
