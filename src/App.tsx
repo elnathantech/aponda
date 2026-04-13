@@ -12,6 +12,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
+import MFAVerify from "./pages/MFAVerify";
+import AccountSecurity from "./pages/AccountSecurity";
 import Company from "./pages/Company";
 import Employees from "./pages/Employees";
 import Payroll from "./pages/Payroll";
