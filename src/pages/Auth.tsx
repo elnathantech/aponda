@@ -82,8 +82,16 @@ const Auth = () => {
           logError('Auth:signIn', error);
           toast.error(getClientSafeError(error));
         } else {
-          toast.success("Welcome back!");
-          navigate("/dashboard");
+          // Check if MFA is required
+          const { data: factorsData } = await supabase.auth.mfa.listFactors();
+          const hasVerifiedFactor = factorsData?.totp?.some((f) => f.status === 'verified');
+          
+          if (hasVerifiedFactor) {
+            navigate("/mfa-verify");
+          } else {
+            toast.success("Welcome back!");
+            navigate("/dashboard");
+          }
         }
       } else {
         const result = signupSchema.safeParse({ email, password, confirmPassword, fullName });
