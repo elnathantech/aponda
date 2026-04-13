@@ -82,7 +82,7 @@ const Auth = () => {
           toast.error(getClientSafeError(error));
         } else {
           toast.success("Welcome back!");
-          navigate("/");
+          navigate("/dashboard");
         }
       } else {
         const result = signupSchema.safeParse({ email, password, confirmPassword, fullName });
