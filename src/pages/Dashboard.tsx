@@ -71,6 +71,10 @@ export default function Dashboard() {
             <Button variant="outline" onClick={() => navigate('/')}>
               Back to Home
             </Button>
+            <Button variant="outline" size="sm" onClick={() => navigate('/account-security')}>
+              <ShieldCheck className="h-4 w-4 mr-2" />
+              Security
+            </Button>
             <Button variant="destructive" size="sm" onClick={async () => { await signOut(); navigate('/'); }}>
               <LogOut className="h-4 w-4 mr-2" />
               Logout
