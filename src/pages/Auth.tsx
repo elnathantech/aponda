@@ -114,12 +114,16 @@ const Auth = () => {
     }
   };
 
-  const handleOnboardingComplete = (data: { businessName: string; businessType: string; teamSize: string; primaryUse: string[] }) => {
-    console.log("Onboarding data:", data);
-    // In a real app, save this to the database
-    toast.success(`Welcome to Aponda, ${data.businessName}! Let's get started.`);
+  const handleOnboardingComplete = async (data: { businessName: string; businessType: string; teamSize: string; primaryUse: string[] }) => {
+    try {
+      await createCompany.mutateAsync({ name: data.businessName });
+      toast.success(`Welcome to Aponda, ${data.businessName}! Let's get started.`);
+    } catch (error) {
+      logError('Auth:onboardingComplete', error);
+      toast.error("Company was not created, but you can add one from the dashboard.");
+    }
     setShowOnboarding(false);
-    navigate("/");
+    navigate("/dashboard");
   };
 
   if (isLoading) {
