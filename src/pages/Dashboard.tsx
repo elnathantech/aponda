@@ -25,6 +25,7 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const { data: companies, isLoading: companiesLoading } = useCompanies();
   const createCompany = useCreateCompany();
+  const { isEnabled: mfaEnabled, isLoading: mfaLoading } = useMFA();
   
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [companyName, setCompanyName] = useState('');
