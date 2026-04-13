@@ -63,10 +63,14 @@ export default function Dashboard() {
               <p className="text-sm text-muted-foreground">SME Payroll & HR Management</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <span className="text-sm text-muted-foreground">{user?.email}</span>
             <Button variant="outline" onClick={() => navigate('/')}>
               Back to Home
+            </Button>
+            <Button variant="destructive" size="sm" onClick={async () => { await signOut(); navigate('/'); }}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
             </Button>
           </div>
         </div>
