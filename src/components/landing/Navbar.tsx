@@ -26,13 +26,18 @@ export function Navbar() {
   };
 
   return (
+    <>
+    <a href="#main-content" className="skip-to-content">
+      Skip to main content
+    </a>
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
       className="fixed top-0 left-0 right-0 z-50 glass"
+      role="banner"
     >
-      <nav className="container mx-auto px-4 py-4">
+      <nav className="container mx-auto px-4 py-4" aria-label="Main navigation">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
@@ -92,6 +97,9 @@ export function Navbar() {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 text-foreground"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
+            aria-controls="mobile-menu"
           >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -105,6 +113,8 @@ export function Navbar() {
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               className="md:hidden mt-4 pb-4"
+              id="mobile-menu"
+              role="menu"
             >
               <div className="flex flex-col gap-4">
                 {navItems.map((item) => (
@@ -162,5 +172,6 @@ export function Navbar() {
         </AnimatePresence>
       </nav>
     </motion.header>
+    </>
   );
 }

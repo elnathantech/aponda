@@ -134,8 +134,28 @@
   }
   
   .glass {
-    background: var(--gradient-glass);
+    background: hsla(var(--background) / 0.85);
     backdrop-filter: blur(20px);
-    border: 1px solid hsla(0 0% 100% / 0.1);
+    border-bottom: 1px solid hsl(var(--border));
+    box-shadow: 0 1px 3px hsla(var(--foreground) / 0.08);
+  }
+
+  .dark .glass {
+    background: hsla(var(--background) / 0.9);
+    border-bottom: 1px solid hsl(var(--border));
+  }
+
+  /* Accessibility: Skip to content link */
+  .skip-to-content {
+    @apply absolute -top-full left-4 z-[100] bg-primary text-primary-foreground px-4 py-2 rounded-b-md font-medium transition-all;
+  }
+  .skip-to-content:focus {
+    @apply top-0;
+  }
+
+  /* Accessibility: Enhanced focus styles */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary;
+    outline-style: solid;
   }
 }
