@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { z } from "zod";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
+import { useCreateCompany } from "@/hooks/useCompany";
 import { getClientSafeError, logError } from "@/lib/errorHandler";
 import apondaLogo from "@/assets/aponda-logo.png";
 
