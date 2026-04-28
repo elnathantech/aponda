@@ -174,11 +174,11 @@ export default function CompanyPage() {
         {onboardingProgress < 100 && (
           <Card className="mb-8 border-primary/50">
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <div>
                   <CardTitle>Complete Your Setup</CardTitle>
                   <CardDescription>
-                    {completedSteps} of {totalSteps} steps completed
+                    {completedSteps} of {totalSteps} steps completed — updates automatically as you go
                   </CardDescription>
                 </div>
                 <Badge variant="outline">{Math.round(onboardingProgress)}% Complete</Badge>
@@ -186,6 +186,36 @@ export default function CompanyPage() {
             </CardHeader>
             <CardContent>
               <Progress value={onboardingProgress} className="mb-4" />
+
+              {nextStep && (
+                <div className="mb-4 flex items-center justify-between gap-3 rounded-lg bg-primary/5 border border-primary/30 p-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <AlertCircle className="h-4 w-4 text-primary" />
+                    <span>
+                      Next up: <strong>{nextStep.step_name}</strong>
+                    </span>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      const map: Record<string, string> = {
+                        'Company Details': '/settings',
+                        'PAYE Registration': '/settings',
+                        'Pension Provider Setup': '/settings',
+                        'Bank Account Details': '/settings',
+                        'Add First Employee': '/employees',
+                        'Configure Pay Schedule': '/employees',
+                        'Review & Confirm': '/payroll',
+                      };
+                      const path = map[nextStep.step_name] ?? '/settings';
+                      navigate(`/company/${companyId}${path}`);
+                    }}
+                  >
+                    Continue
+                  </Button>
+                </div>
+              )}
+
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {onboardingSteps?.map((step) => (
                   <div
@@ -207,6 +237,20 @@ export default function CompanyPage() {
                     <span className="truncate">{step.step_name}</span>
                   </div>
                 ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {onboardingProgress >= 100 && (
+          <Card className="mb-8 border-green-500/40 bg-green-500/5">
+            <CardContent className="pt-6 flex items-center gap-3">
+              <CheckCircle2 className="h-6 w-6 text-green-600" />
+              <div>
+                <p className="font-medium">Setup complete</p>
+                <p className="text-sm text-muted-foreground">
+                  Your workspace is fully configured. You can update details any time in Settings.
+                </p>
               </div>
             </CardContent>
           </Card>
