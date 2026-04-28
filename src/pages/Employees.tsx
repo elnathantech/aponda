@@ -502,6 +502,14 @@ export default function EmployeesPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {companyId && (
+        <EmployeeCsvUpload
+          open={isCsvOpen}
+          onOpenChange={setIsCsvOpen}
+          companyId={companyId}
+        />
+      )}
     </div>
   );
 }
