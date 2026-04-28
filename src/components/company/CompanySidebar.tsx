@@ -88,7 +88,22 @@ export function CompanySidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border px-3 py-3">
         <div className="flex items-center gap-2 overflow-hidden">
-          <Building2 className="h-5 w-5 shrink-0 text-primary" />
+          {company?.logo_url ? (
+            <img
+              src={company.logo_url}
+              alt={`${company.name} logo`}
+              className="h-7 w-7 shrink-0 rounded object-contain bg-background"
+            />
+          ) : company?.brand_avatar ? (
+            <div
+              className="h-7 w-7 shrink-0 rounded flex items-center justify-center text-xs font-bold text-white"
+              style={{ backgroundColor: company.brand_color || 'hsl(var(--primary))' }}
+            >
+              {company.brand_avatar}
+            </div>
+          ) : (
+            <Building2 className="h-5 w-5 shrink-0 text-primary" />
+          )}
           {!collapsed && (
             <span className="truncate text-sm font-semibold text-sidebar-foreground">
               {company?.name ?? 'Company'}
