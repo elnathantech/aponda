@@ -17,9 +17,12 @@ export type Database = {
       companies: {
         Row: {
           accounts_office_reference: string | null
+          brand_avatar: string | null
+          brand_color: string | null
           company_number: string | null
           created_at: string
           id: string
+          logo_url: string | null
           name: string
           paye_reference: string | null
           pension_employee_contribution: number | null
@@ -33,9 +36,12 @@ export type Database = {
         }
         Insert: {
           accounts_office_reference?: string | null
+          brand_avatar?: string | null
+          brand_color?: string | null
           company_number?: string | null
           created_at?: string
           id?: string
+          logo_url?: string | null
           name: string
           paye_reference?: string | null
           pension_employee_contribution?: number | null
@@ -49,9 +55,12 @@ export type Database = {
         }
         Update: {
           accounts_office_reference?: string | null
+          brand_avatar?: string | null
+          brand_color?: string | null
           company_number?: string | null
           created_at?: string
           id?: string
+          logo_url?: string | null
           name?: string
           paye_reference?: string | null
           pension_employee_contribution?: number | null
