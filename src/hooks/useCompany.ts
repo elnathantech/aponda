@@ -16,6 +16,9 @@ export interface Company {
   pension_provider: string | null;
   pension_employer_contribution: number;
   pension_employee_contribution: number;
+  brand_color: string | null;
+  brand_avatar: string | null;
+  logo_url: string | null;
   created_at: string;
   updated_at: string;
 }
