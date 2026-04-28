@@ -266,3 +266,73 @@ export function useDeleteEmployee() {
     },
   });
 }
+
+export function useBulkCreateEmployees() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      companyId,
+      employees,
+    }: {
+      companyId: string;
+      employees: Partial<Employee>[];
+    }) => {
+      // Get current count to start numbering
+      const { count } = await supabase
+        .from('employees')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', companyId);
+
+      let nextNum = (count || 0) + 1;
+
+      const rows = employees.map((e) => ({
+        company_id: companyId,
+        employee_number: e.employee_number || `EMP${String(nextNum++).padStart(4, '0')}`,
+        first_name: e.first_name || '',
+        last_name: e.last_name || '',
+        email: e.email || null,
+        phone: e.phone || null,
+        ni_number: e.ni_number || null,
+        job_title: e.job_title || null,
+        department: e.department || null,
+        start_date: e.start_date || new Date().toISOString().split('T')[0],
+        annual_salary: Number(e.annual_salary) || 0,
+        pay_frequency: (e.pay_frequency as Employee['pay_frequency']) || 'monthly',
+        tax_code: e.tax_code || '1257L',
+        status: (e.status as Employee['status']) || 'pending',
+        student_loan_plan: e.student_loan_plan || null,
+        pension_status: (e.pension_status as Employee['pension_status']) || 'eligible',
+      }));
+
+      const { data, error } = await supabase
+        .from('employees')
+        .insert(rows)
+        .select();
+
+      if (error) throw error;
+
+      // Create onboarding steps for all
+      if (data && data.length) {
+        const steps = data.flatMap((emp) =>
+          EMPLOYEE_ONBOARDING_STEPS.map((step) => ({
+            employee_id: emp.id,
+            step_name: step.name,
+            step_order: step.order,
+            status: 'pending' as const,
+          }))
+        );
+        await supabase.from('employee_onboarding').insert(steps);
+      }
+
+      return { companyId, count: data?.length || 0 };
+    },
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ['employees', result.companyId] });
+      toast.success(`${result.count} employees imported successfully`);
+    },
+    onError: (error) => {
+      toast.error('Bulk import failed: ' + error.message);
+    },
+  });
+}
