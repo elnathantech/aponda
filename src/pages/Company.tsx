@@ -83,10 +83,44 @@ export default function CompanyPage() {
     setIsSettingsOpen(false);
   };
   
+  // Auto-derive onboarding step completion from real company data
+  useEffect(() => {
+    if (!company || !onboardingSteps?.length) return;
+
+    const isComplete = (name: string): boolean => {
+      switch (name) {
+        case 'Company Details':
+          return Boolean(company.name && company.company_number);
+        case 'PAYE Registration':
+          return Boolean(company.paye_reference);
+        case 'Pension Provider Setup':
+          return Boolean(company.pension_provider);
+        case 'Bank Account Details':
+          return Boolean(company.registered_address);
+        case 'Add First Employee':
+          return (employees?.length ?? 0) > 0;
+        case 'Configure Pay Schedule':
+          return (employees?.length ?? 0) > 0;
+        case 'Review & Confirm':
+          return (payrollRuns?.length ?? 0) > 0;
+        default:
+          return false;
+      }
+    };
+
+    onboardingSteps.forEach((step) => {
+      if (step.status !== 'completed' && isComplete(step.step_name)) {
+        updateOnboardingStep.mutate({ id: step.id, status: 'completed' });
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [company, employees, payrollRuns, onboardingSteps]);
+
   const completedSteps = onboardingSteps?.filter(s => s.status === 'completed').length || 0;
   const totalSteps = onboardingSteps?.length || 1;
   const onboardingProgress = (completedSteps / totalSteps) * 100;
-  
+  const nextStep = onboardingSteps?.find(s => s.status !== 'completed');
+
   const activeEmployees = employees?.filter(e => e.status === 'active').length || 0;
   const pendingPayroll = payrollRuns?.filter(r => r.status === 'draft').length || 0;
   
