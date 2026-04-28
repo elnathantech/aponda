@@ -20,11 +20,13 @@ import {
   MoreHorizontal,
   Pencil,
   Trash2,
-  User
+  User,
+  Upload
 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { formatCurrency } from '@/lib/uk-payroll-calculator';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { EmployeeCsvUpload } from '@/components/employees/EmployeeCsvUpload';
 
 const defaultEmployee: Partial<Employee> = {
   first_name: '',
@@ -58,6 +60,7 @@ export default function EmployeesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isCsvOpen, setIsCsvOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<Partial<Employee> | null>(null);
   const [formData, setFormData] = useState<Partial<Employee>>(defaultEmployee);
   
@@ -130,14 +133,39 @@ export default function EmployeesPage() {
             <h1 className="text-xl font-bold">Employee Management</h1>
             <p className="text-sm text-muted-foreground">{company?.name}</p>
           </div>
-          <Button onClick={handleOpenCreate}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Employee
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => setIsCsvOpen(true)}>
+              <Upload className="h-4 w-4 mr-2" />
+              Import CSV
+            </Button>
+            <Button onClick={handleOpenCreate}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Employee
+            </Button>
+          </div>
         </div>
       </header>
       
       <main className="container mx-auto px-4 py-8">
+        {/* CSV import recommendation */}
+        {(employees?.length ?? 0) <= 3 && (
+          <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-lg border border-primary/40 bg-primary/5 p-4">
+            <div className="flex items-start gap-3">
+              <Upload className="h-5 w-5 text-primary mt-0.5" />
+              <div>
+                <p className="font-medium">Have more than 3 employees?</p>
+                <p className="text-sm text-muted-foreground">
+                  Save time by importing them all at once with our CSV template.
+                </p>
+              </div>
+            </div>
+            <Button onClick={() => setIsCsvOpen(true)}>
+              <Upload className="h-4 w-4 mr-2" />
+              Bulk import
+            </Button>
+          </div>
+        )}
+
         {/* Search */}
         <div className="flex items-center gap-4 mb-6">
           <div className="relative flex-1 max-w-md">
@@ -474,6 +502,14 @@ export default function EmployeesPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {companyId && (
+        <EmployeeCsvUpload
+          open={isCsvOpen}
+          onOpenChange={setIsCsvOpen}
+          companyId={companyId}
+        />
+      )}
     </div>
   );
 }

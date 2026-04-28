@@ -18,6 +18,7 @@ import {
   MapPin,
   Building
 } from 'lucide-react';
+import { BrandingCard } from '@/components/company/BrandingCard';
 
 interface Address {
   line1: string;
@@ -157,6 +158,9 @@ export default function SettingsPage() {
       
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="space-y-6">
+          {/* Workspace Branding */}
+          {company && <BrandingCard company={company} />}
+
           {/* Company Details */}
           <Card>
             <CardHeader>
