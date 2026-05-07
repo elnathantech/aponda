@@ -26,6 +26,7 @@ import Cashflow from "./pages/Cashflow";
 import Workload from "./pages/Workload";
 import Revenue from "./pages/Revenue";
 import Forecasting from "./pages/Forecasting";
+import Automation from "./pages/Automation";
 import NotFound from "./pages/NotFound";
 import { CompanyLayoutRoute } from "./components/company/CompanyLayoutRoute";
 
