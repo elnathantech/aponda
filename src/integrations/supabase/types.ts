@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      automation_logs: {
+        Row: {
+          automation_type: string
+          company_id: string
+          created_at: string
+          details: Json | null
+          id: string
+          related_id: string | null
+          status: string
+        }
+        Insert: {
+          automation_type: string
+          company_id: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          related_id?: string | null
+          status?: string
+        }
+        Update: {
+          automation_type?: string
+          company_id?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          related_id?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           accounts_office_reference: string | null
@@ -741,6 +771,69 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      recurring_invoices: {
+        Row: {
+          client_address: Json | null
+          client_email: string | null
+          client_name: string
+          company_id: string
+          created_at: string
+          frequency: string
+          id: string
+          is_active: boolean
+          items_template: Json
+          last_generated_at: string | null
+          next_run_date: string
+          notes: string | null
+          payment_due_days: number
+          payment_terms: string | null
+          project_id: string | null
+          tax_rate: number | null
+          total_generated: number
+          updated_at: string
+        }
+        Insert: {
+          client_address?: Json | null
+          client_email?: string | null
+          client_name: string
+          company_id: string
+          created_at?: string
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          items_template?: Json
+          last_generated_at?: string | null
+          next_run_date: string
+          notes?: string | null
+          payment_due_days?: number
+          payment_terms?: string | null
+          project_id?: string | null
+          tax_rate?: number | null
+          total_generated?: number
+          updated_at?: string
+        }
+        Update: {
+          client_address?: Json | null
+          client_email?: string | null
+          client_name?: string
+          company_id?: string
+          created_at?: string
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          items_template?: Json
+          last_generated_at?: string | null
+          next_run_date?: string
+          notes?: string | null
+          payment_due_days?: number
+          payment_terms?: string | null
+          project_id?: string | null
+          tax_rate?: number | null
+          total_generated?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       tax_year_records: {
         Row: {

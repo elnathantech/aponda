@@ -13,6 +13,7 @@ import {
   BarChart3,
   Calculator,
   Settings,
+  Zap,
   LayoutDashboard,
 } from 'lucide-react';
 import {
@@ -56,6 +57,7 @@ export function CompanySidebar() {
   const otherItems = [
     { title: 'Reports', url: `${base}/reports`, icon: FileText },
     { title: 'Workload', url: `${base}/workload`, icon: Clock },
+    { title: 'Automation', url: `${base}/automation`, icon: Zap },
     { title: 'Settings', url: `${base}/settings`, icon: Settings },
   ];
 

@@ -26,6 +26,7 @@ import Cashflow from "./pages/Cashflow";
 import Workload from "./pages/Workload";
 import Revenue from "./pages/Revenue";
 import Forecasting from "./pages/Forecasting";
+import Automation from "./pages/Automation";
 import NotFound from "./pages/NotFound";
 import { CompanyLayoutRoute } from "./components/company/CompanyLayoutRoute";
 
@@ -62,6 +63,8 @@ const App = () => (
                   <Route path="workload" element={<Workload />} />
                   <Route path="revenue" element={<Revenue />} />
                   <Route path="forecasting" element={<Forecasting />} />
+                  <Route path="forecasting" element={<Forecasting />} />
+                  <Route path="automation" element={<Automation />} />
                 </Route>
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
