@@ -13,6 +13,7 @@ import {
   BarChart3,
   Calculator,
   Settings,
+  Zap,
   LayoutDashboard,
 } from 'lucide-react';
 import {
