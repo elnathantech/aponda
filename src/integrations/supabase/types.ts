@@ -44,6 +44,141 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_accounts: {
+        Row: {
+          account_id: string
+          account_name: string | null
+          account_number: string | null
+          balance: number | null
+          bank_connection_id: string
+          company_id: string
+          created_at: string
+          currency: string | null
+          id: string
+          sort_code: string | null
+        }
+        Insert: {
+          account_id: string
+          account_name?: string | null
+          account_number?: string | null
+          balance?: number | null
+          bank_connection_id: string
+          company_id: string
+          created_at?: string
+          currency?: string | null
+          id?: string
+          sort_code?: string | null
+        }
+        Update: {
+          account_id?: string
+          account_name?: string | null
+          account_number?: string | null
+          balance?: number | null
+          bank_connection_id?: string
+          company_id?: string
+          created_at?: string
+          currency?: string | null
+          id?: string
+          sort_code?: string | null
+        }
+        Relationships: []
+      }
+      bank_connections: {
+        Row: {
+          company_id: string
+          consent_id: string | null
+          consent_status: string
+          consent_token: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          institution_id: string
+          institution_name: string | null
+          last_synced_at: string | null
+          provider: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          consent_id?: string | null
+          consent_status?: string
+          consent_token?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          institution_id: string
+          institution_name?: string | null
+          last_synced_at?: string | null
+          provider?: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          consent_id?: string | null
+          consent_status?: string
+          consent_token?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          institution_id?: string
+          institution_name?: string | null
+          last_synced_at?: string | null
+          provider?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bank_transactions: {
+        Row: {
+          amount: number
+          bank_account_id: string
+          category: string | null
+          company_id: string
+          counterparty: string | null
+          created_at: string
+          currency: string | null
+          description: string | null
+          external_id: string | null
+          id: string
+          matched_id: string | null
+          matched_type: string | null
+          status: string
+          txn_date: string
+        }
+        Insert: {
+          amount: number
+          bank_account_id: string
+          category?: string | null
+          company_id: string
+          counterparty?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          external_id?: string | null
+          id?: string
+          matched_id?: string | null
+          matched_type?: string | null
+          status?: string
+          txn_date: string
+        }
+        Update: {
+          amount?: number
+          bank_account_id?: string
+          category?: string | null
+          company_id?: string
+          counterparty?: string | null
+          created_at?: string
+          currency?: string | null
+          description?: string | null
+          external_id?: string | null
+          id?: string
+          matched_id?: string | null
+          matched_type?: string | null
+          status?: string
+          txn_date?: string
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           accounts_office_reference: string | null
@@ -317,6 +452,96 @@ export type Database = {
           },
         ]
       }
+      expense_receipts: {
+        Row: {
+          company_id: string
+          created_at: string
+          expense_id: string | null
+          file_name: string | null
+          file_url: string
+          id: string
+          ocr_data: Json | null
+          ocr_status: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          expense_id?: string | null
+          file_name?: string | null
+          file_url: string
+          id?: string
+          ocr_data?: Json | null
+          ocr_status?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          expense_id?: string | null
+          file_name?: string | null
+          file_url?: string
+          id?: string
+          ocr_data?: Json | null
+          ocr_status?: string
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          category: string
+          company_id: string
+          created_at: string
+          currency: string
+          description: string | null
+          employee_id: string | null
+          expense_date: string
+          id: string
+          notes: string | null
+          payment_method: string | null
+          project_id: string | null
+          status: string
+          updated_at: string
+          vat_amount: number | null
+          vendor: string | null
+        }
+        Insert: {
+          amount?: number
+          category?: string
+          company_id: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          employee_id?: string | null
+          expense_date?: string
+          id?: string
+          notes?: string | null
+          payment_method?: string | null
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+          vat_amount?: number | null
+          vendor?: string | null
+        }
+        Update: {
+          amount?: number
+          category?: string
+          company_id?: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          employee_id?: string | null
+          expense_date?: string
+          id?: string
+          notes?: string | null
+          payment_method?: string | null
+          project_id?: string | null
+          status?: string
+          updated_at?: string
+          vat_amount?: number | null
+          vendor?: string | null
+        }
+        Relationships: []
+      }
       hr_documents: {
         Row: {
           company_id: string | null
@@ -405,6 +630,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      invoice_payment_links: {
+        Row: {
+          amount: number
+          checkout_url: string | null
+          company_id: string
+          created_at: string
+          currency: string | null
+          external_id: string | null
+          id: string
+          invoice_id: string
+          paid_at: string | null
+          provider: string
+          status: string
+        }
+        Insert: {
+          amount: number
+          checkout_url?: string | null
+          company_id: string
+          created_at?: string
+          currency?: string | null
+          external_id?: string | null
+          id?: string
+          invoice_id: string
+          paid_at?: string | null
+          provider?: string
+          status?: string
+        }
+        Update: {
+          amount?: number
+          checkout_url?: string | null
+          company_id?: string
+          created_at?: string
+          currency?: string | null
+          external_id?: string | null
+          id?: string
+          invoice_id?: string
+          paid_at?: string | null
+          provider?: string
+          status?: string
+        }
+        Relationships: []
       }
       invoices: {
         Row: {
@@ -539,6 +806,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      mileage_trips: {
+        Row: {
+          amount: number
+          company_id: string
+          created_at: string
+          employee_id: string | null
+          from_address: string | null
+          gps_track: Json | null
+          id: string
+          miles: number
+          purpose: string | null
+          rate_per_mile: number
+          status: string
+          to_address: string | null
+          trip_date: string
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          amount?: number
+          company_id: string
+          created_at?: string
+          employee_id?: string | null
+          from_address?: string | null
+          gps_track?: Json | null
+          id?: string
+          miles?: number
+          purpose?: string | null
+          rate_per_mile?: number
+          status?: string
+          to_address?: string | null
+          trip_date?: string
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Update: {
+          amount?: number
+          company_id?: string
+          created_at?: string
+          employee_id?: string | null
+          from_address?: string | null
+          gps_track?: Json | null
+          id?: string
+          miles?: number
+          purpose?: string | null
+          rate_per_mile?: number
+          status?: string
+          to_address?: string | null
+          trip_date?: string
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Relationships: []
       }
       payroll_runs: {
         Row: {
