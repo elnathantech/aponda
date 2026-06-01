@@ -16,8 +16,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import {
-  ArrowLeft, Plus, Loader2, MoreHorizontal, Send, CheckCircle, XCircle, Trash2, Receipt, PoundSterling, Download
+  ArrowLeft, Plus, Loader2, MoreHorizontal, Send, CheckCircle, XCircle, Trash2, Receipt, PoundSterling, Download, Link2
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { generateInvoicePDF } from '@/lib/invoice-pdf-generator';
 
 const statusColors: Record<Invoice['status'], string> = {
@@ -129,6 +130,20 @@ export default function InvoicesPage() {
       paymentTerms: inv.payment_terms || undefined,
       status: inv.status,
     });
+  };
+
+  const handleGetPaymentLink = async (inv: Invoice) => {
+    toast.loading('Creating Stripe payment link...', { id: 'pay-link' });
+    const { data, error } = await supabase.functions.invoke('create-invoice-payment-link', {
+      body: { invoice_id: inv.id },
+    });
+    if (error || !data?.url) {
+      toast.error(error?.message || data?.error || 'Failed to create payment link', { id: 'pay-link' });
+      return;
+    }
+    await navigator.clipboard.writeText(data.url).catch(() => {});
+    toast.success('Payment link copied to clipboard', { id: 'pay-link' });
+    window.open(data.url, '_blank');
   };
 
   const filtered = invoices?.filter(inv => filterStatus === 'all' || inv.status === filterStatus) || [];
@@ -350,6 +365,11 @@ export default function InvoicesPage() {
                             <DropdownMenuItem onClick={() => handleDownloadPDF(inv)}>
                               <Download className="h-4 w-4 mr-2" />Download PDF
                             </DropdownMenuItem>
+                            {inv.status !== 'paid' && inv.status !== 'cancelled' && (
+                              <DropdownMenuItem onClick={() => handleGetPaymentLink(inv)}>
+                                <Link2 className="h-4 w-4 mr-2" />Get Payment Link
+                              </DropdownMenuItem>
+                            )}
                             {inv.status === 'draft' && (
                               <DropdownMenuItem onClick={() => updateStatus.mutate({ id: inv.id, status: 'sent' })}>
                                 <Send className="h-4 w-4 mr-2" />Mark as Sent
