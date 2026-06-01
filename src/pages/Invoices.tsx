@@ -132,6 +132,20 @@ export default function InvoicesPage() {
     });
   };
 
+  const handleGetPaymentLink = async (inv: Invoice) => {
+    toast.loading('Creating Stripe payment link...', { id: 'pay-link' });
+    const { data, error } = await supabase.functions.invoke('create-invoice-payment-link', {
+      body: { invoice_id: inv.id },
+    });
+    if (error || !data?.url) {
+      toast.error(error?.message || data?.error || 'Failed to create payment link', { id: 'pay-link' });
+      return;
+    }
+    await navigator.clipboard.writeText(data.url).catch(() => {});
+    toast.success('Payment link copied to clipboard', { id: 'pay-link' });
+    window.open(data.url, '_blank');
+  };
+
   const filtered = invoices?.filter(inv => filterStatus === 'all' || inv.status === filterStatus) || [];
   const totalOutstanding = invoices?.filter(i => i.status === 'sent' || i.status === 'overdue').reduce((s, i) => s + i.total - i.amount_paid, 0) || 0;
   const totalPaid = invoices?.filter(i => i.status === 'paid').reduce((s, i) => s + i.total, 0) || 0;
