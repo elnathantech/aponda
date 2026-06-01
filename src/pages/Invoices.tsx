@@ -16,8 +16,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import {
-  ArrowLeft, Plus, Loader2, MoreHorizontal, Send, CheckCircle, XCircle, Trash2, Receipt, PoundSterling, Download
+  ArrowLeft, Plus, Loader2, MoreHorizontal, Send, CheckCircle, XCircle, Trash2, Receipt, PoundSterling, Download, Link2
 } from 'lucide-react';
+import { toast } from 'sonner';
 import { generateInvoicePDF } from '@/lib/invoice-pdf-generator';
 
 const statusColors: Record<Invoice['status'], string> = {
