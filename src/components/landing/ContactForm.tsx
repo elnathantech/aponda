@@ -79,7 +79,6 @@ const ContactForm = () => {
           email: result.data.email,
           subject: result.data.subject || "",
           message: result.data.message,
-          adminEmail: "admin@aponda.com", // Configure this with your admin email
         },
       }).catch(() => {
         // Silent fail for email - the submission was still saved
