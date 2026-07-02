@@ -1,0 +1,1 @@
+ALTER TABLE public.employees ADD COLUMN IF NOT EXISTS worker_type text NOT NULL DEFAULT 'employee' CHECK (worker_type IN ('employee','contractor'));
