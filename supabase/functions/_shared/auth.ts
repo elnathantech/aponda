@@ -9,7 +9,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 export async function authorizeCronOrUser(req: Request): Promise<
   { ok: true; userId?: string } | { ok: false; response: Response }
 > {
-  const cronSecret = Deno.env.get("CRON_SECRET");
+  const cronSecret = Deno.env.get("CRON_TRIGGER_SECRET") ?? Deno.env.get("CRON_SECRET");
   const providedSecret = req.headers.get("x-cron-secret");
   if (cronSecret && providedSecret && providedSecret === cronSecret) {
     return { ok: true };
