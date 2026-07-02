@@ -145,6 +145,7 @@ export function useCreateEmployee() {
           tax_code: employeeData.tax_code || '1257L',
           student_loan_plan: employeeData.student_loan_plan,
           pension_status: employeeData.pension_status || 'eligible',
+          worker_type: employeeData.worker_type || 'employee',
         }])
         .select()
         .single();
