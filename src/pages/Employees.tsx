@@ -216,8 +216,13 @@ export default function EmployeesPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div>
-                        <p>{employee.job_title || '-'}</p>
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <p>{employee.job_title || '-'}</p>
+                          <Badge variant={employee.worker_type === 'contractor' ? 'outline' : 'secondary'} className="capitalize text-[10px]">
+                            {employee.worker_type}
+                          </Badge>
+                        </div>
                         <p className="text-sm text-muted-foreground">{employee.department || '-'}</p>
                       </div>
                     </TableCell>
