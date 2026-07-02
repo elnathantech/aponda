@@ -305,6 +305,7 @@ export function useBulkCreateEmployees() {
         status: (e.status as Employee['status']) || 'pending',
         student_loan_plan: e.student_loan_plan || null,
         pension_status: (e.pension_status as Employee['pension_status']) || 'eligible',
+        worker_type: (e.worker_type as Employee['worker_type']) || 'employee',
       }));
 
       const { data, error } = await supabase
