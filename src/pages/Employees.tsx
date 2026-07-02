@@ -340,6 +340,26 @@ export default function EmployeesPage() {
             {/* Employment Details */}
             <div className="space-y-4">
               <h4 className="font-medium">Employment Details</h4>
+              <div className="space-y-2">
+                <Label htmlFor="worker_type">Worker Type *</Label>
+                <Select
+                  value={formData.worker_type || 'employee'}
+                  onValueChange={(value) => setFormData({ ...formData, worker_type: value as Employee['worker_type'] })}
+                >
+                  <SelectTrigger id="worker_type">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="employee">Employee (PAYE)</SelectItem>
+                    <SelectItem value="contractor">Contractor (self-employed / off-payroll)</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  {formData.worker_type === 'contractor'
+                    ? 'Contractors invoice you and handle their own tax & NI. PAYE fields are optional.'
+                    : 'Employees are paid via PAYE with tax and NI deducted through payroll.'}
+                </p>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="job_title">Job Title</Label>
