@@ -15,7 +15,6 @@ interface ContactNotificationRequest {
   email: string;
   subject?: string;
   message: string;
-  adminEmail: string;
 }
 
 // In-memory rate limiting store (resets on function cold start)
@@ -73,11 +72,6 @@ function validateInput(data: ContactNotificationRequest): { valid: boolean; erro
   }
   if (data.message.length > 2000) {
     return { valid: false, error: "Message must be less than 2000 characters" };
-  }
-
-  // Admin email validation
-  if (!data.adminEmail || !emailRegex.test(data.adminEmail)) {
-    return { valid: false, error: "Invalid admin email" };
   }
 
   return { valid: true };
