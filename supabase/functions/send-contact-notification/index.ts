@@ -15,7 +15,6 @@ interface ContactNotificationRequest {
   email: string;
   subject?: string;
   message: string;
-  adminEmail: string;
 }
 
 // In-memory rate limiting store (resets on function cold start)
@@ -73,11 +72,6 @@ function validateInput(data: ContactNotificationRequest): { valid: boolean; erro
   }
   if (data.message.length > 2000) {
     return { valid: false, error: "Message must be less than 2000 characters" };
-  }
-
-  // Admin email validation
-  if (!data.adminEmail || !emailRegex.test(data.adminEmail)) {
-    return { valid: false, error: "Invalid admin email" };
   }
 
   return { valid: true };
@@ -152,7 +146,17 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    const { name, email, subject, message, adminEmail } = requestData;
+    const { name, email, subject, message } = requestData;
+
+    // Admin email is configured server-side only — never trusted from the client
+    const adminEmail = Deno.env.get("ADMIN_NOTIFICATION_EMAIL");
+    if (!adminEmail) {
+      console.error("ADMIN_NOTIFICATION_EMAIL is not configured");
+      return new Response(
+        JSON.stringify({ error: "Notification email not configured" }),
+        { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
+      );
+    }
 
     // Rate limiting check
     const rateLimit = checkRateLimit(email.toLowerCase());
@@ -190,7 +194,7 @@ const handler = async (req: Request): Promise<Response> => {
     const safeSubject = escapeHtml(subject || "No Subject");
     const safeMessage = escapeHtml(message);
 
-    console.log("Sending contact notification email", { name: safeName, email: safeEmail, subject: safeSubject, adminEmail });
+    console.log("Sending contact notification email", { name: safeName, email: safeEmail, subject: safeSubject });
 
     // Send notification to admin
     const adminEmailResponse = await fetch("https://api.resend.com/emails", {
