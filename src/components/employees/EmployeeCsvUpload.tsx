@@ -102,6 +102,7 @@ function parseCsv(text: string): Partial<Employee>[] {
       pay_frequency: (row.pay_frequency as Employee['pay_frequency']) || 'monthly',
       tax_code: row.tax_code || '1257L',
       status: (row.status as Employee['status']) || 'pending',
+      worker_type: ((row.worker_type || '').toLowerCase() === 'contractor' ? 'contractor' : 'employee') as Employee['worker_type'],
     } as Partial<Employee>;
   });
 }
