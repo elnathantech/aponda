@@ -44,6 +44,7 @@ const defaultEmployee: Partial<Employee> = {
   is_cumulative: true,
   student_loan_plan: null,
   pension_status: 'eligible',
+  worker_type: 'employee',
 };
 
 export default function EmployeesPage() {
