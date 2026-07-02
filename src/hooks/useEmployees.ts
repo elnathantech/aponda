@@ -27,6 +27,7 @@ export interface Employee {
   pension_opt_out_date: string | null;
   emergency_contact: Record<string, string> | null;
   bank_details: Record<string, string> | null;
+  worker_type: 'employee' | 'contractor';
   created_at: string;
   updated_at: string;
 }
@@ -144,6 +145,7 @@ export function useCreateEmployee() {
           tax_code: employeeData.tax_code || '1257L',
           student_loan_plan: employeeData.student_loan_plan,
           pension_status: employeeData.pension_status || 'eligible',
+          worker_type: employeeData.worker_type || 'employee',
         }])
         .select()
         .single();
@@ -303,6 +305,7 @@ export function useBulkCreateEmployees() {
         status: (e.status as Employee['status']) || 'pending',
         student_loan_plan: e.student_loan_plan || null,
         pension_status: (e.pension_status as Employee['pension_status']) || 'eligible',
+        worker_type: (e.worker_type as Employee['worker_type']) || 'employee',
       }));
 
       const { data, error } = await supabase

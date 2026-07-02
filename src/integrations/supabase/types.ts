@@ -385,6 +385,7 @@ export type Database = {
           student_loan_plan: string | null
           tax_code: string | null
           updated_at: string
+          worker_type: string
         }
         Insert: {
           address?: Json | null
@@ -413,6 +414,7 @@ export type Database = {
           student_loan_plan?: string | null
           tax_code?: string | null
           updated_at?: string
+          worker_type?: string
         }
         Update: {
           address?: Json | null
@@ -441,6 +443,7 @@ export type Database = {
           student_loan_plan?: string | null
           tax_code?: string | null
           updated_at?: string
+          worker_type?: string
         }
         Relationships: [
           {

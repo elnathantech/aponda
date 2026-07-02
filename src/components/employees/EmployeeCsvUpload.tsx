@@ -31,11 +31,12 @@ const TEMPLATE_HEADERS = [
   'pay_frequency',
   'tax_code',
   'status',
+  'worker_type',
 ];
 
 const TEMPLATE_SAMPLE = [
-  ['Jane', 'Doe', 'jane@example.com', '07700900000', 'AB123456C', 'Engineer', 'Tech', '2025-01-15', '45000', 'monthly', '1257L', 'active'],
-  ['John', 'Smith', 'john@example.com', '07700900001', 'CD654321E', 'Designer', 'Product', '2025-02-01', '38000', 'monthly', '1257L', 'active'],
+  ['Jane', 'Doe', 'jane@example.com', '07700900000', 'AB123456C', 'Engineer', 'Tech', '2025-01-15', '45000', 'monthly', '1257L', 'active', 'employee'],
+  ['John', 'Smith', 'john@example.com', '07700900001', 'CD654321E', 'Designer', 'Product', '2025-02-01', '38000', 'monthly', '1257L', 'active', 'contractor'],
 ];
 
 function downloadTemplate() {
@@ -101,6 +102,7 @@ function parseCsv(text: string): Partial<Employee>[] {
       pay_frequency: (row.pay_frequency as Employee['pay_frequency']) || 'monthly',
       tax_code: row.tax_code || '1257L',
       status: (row.status as Employee['status']) || 'pending',
+      worker_type: ((row.worker_type || '').toLowerCase() === 'contractor' ? 'contractor' : 'employee') as Employee['worker_type'],
     } as Partial<Employee>;
   });
 }
