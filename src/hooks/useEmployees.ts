@@ -27,6 +27,7 @@ export interface Employee {
   pension_opt_out_date: string | null;
   emergency_contact: Record<string, string> | null;
   bank_details: Record<string, string> | null;
+  worker_type: 'employee' | 'contractor';
   created_at: string;
   updated_at: string;
 }
