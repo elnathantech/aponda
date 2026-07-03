@@ -17,6 +17,7 @@ import AccountSecurity from "./pages/AccountSecurity";
 import Company from "./pages/Company";
 import Employees from "./pages/Employees";
 import Payroll from "./pages/Payroll";
+import Payments from "./pages/Payments";
 import Reports from "./pages/Reports";
 import Leave from "./pages/Leave";
 import Settings from "./pages/Settings";
