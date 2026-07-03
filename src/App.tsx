@@ -17,6 +17,7 @@ import AccountSecurity from "./pages/AccountSecurity";
 import Company from "./pages/Company";
 import Employees from "./pages/Employees";
 import Payroll from "./pages/Payroll";
+import Payments from "./pages/Payments";
 import Reports from "./pages/Reports";
 import Leave from "./pages/Leave";
 import Settings from "./pages/Settings";
@@ -54,6 +55,7 @@ const App = () => (
                   <Route index element={<Company />} />
                   <Route path="employees" element={<Employees />} />
                   <Route path="payroll" element={<Payroll />} />
+                  <Route path="payments" element={<Payments />} />
                   <Route path="reports" element={<Reports />} />
                   <Route path="leave" element={<Leave />} />
                   <Route path="settings" element={<Settings />} />
