@@ -15,6 +15,7 @@ import {
   Settings,
   Zap,
   LayoutDashboard,
+  Wallet,
 } from 'lucide-react';
 import {
   Sidebar,
