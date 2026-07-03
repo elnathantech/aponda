@@ -44,6 +44,7 @@ export function CompanySidebar() {
     { title: 'Overview', url: base, icon: LayoutDashboard, end: true },
     { title: 'Employees', url: `${base}/employees`, icon: Users },
     { title: 'Payroll', url: `${base}/payroll`, icon: PoundSterling },
+    { title: 'Payments', url: `${base}/payments`, icon: Wallet },
     { title: 'Projects', url: `${base}/projects`, icon: FolderOpen },
     { title: 'Invoices', url: `${base}/invoices`, icon: Receipt },
     { title: 'Leave', url: `${base}/leave`, icon: CalendarDays },
